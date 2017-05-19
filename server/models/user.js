@@ -55,7 +55,6 @@ module.exports = {
   },
   create: function(req, res) {
     var errors = [];
-
     var user = {email: req.body.email, password:req.body.password};
     if(!user.email) {
       errors.push("Email is required!");
@@ -63,34 +62,65 @@ module.exports = {
     if(!user.password) {
       errors.push("Password is required!");
     }
+    User.findOne({email: req.body.email}).then(function(user, err){
+      if(user) {
+        errors.push("This email is already registered!");
+      }
+      if(!errors.length) {
+        User.create({
+          email: user.email,
+          pw_hash: bcrypt.hashSync(user.password, bcrypt.genSaltSync(8)
+        )}).then(function(user, err) {
+          if(err) {
+            res.json({errors:err});
+          } else {
+            res.json(user);
+          }
+        })
+      }
+      else {
+        console.log("ERR:", errors)
+        res.json({errors:errors});
+      }
+    })
+  },
+  login: function(req, res) {
+    var errors = [];
+    var login = {email: req.body.email, password:req.body.password};
+    console.log("login - ", login);
+    if(!login.email) {
+      errors.push("Email is required!");
+    }
+    if(!login.password) {
+      errors.push("Password is required!");
+    }
     if(!errors.length) {
-      newUser = User.create({
-        email: user.email,
-        pw_hash: bcrypt.hashSync(user.password, bcrypt.genSaltSync(8)
-      )}).then(function(err, user) {
-        if(err) {
-          res.json(err);
-        } else {
-          res.json(user);
+      User.findOne({where:{
+        email:login.email,
+      }}).then(function(user, err){
+        console.log(user, err);
+        if(user) {
+          console.log("user");
+          var match = bcrypt.compareSync(login.password, user.pw_hash)
+          console.log(match);
+          if(match) {
+            res.json({success:true, id:user.id});
+          } else {
+            res.json({success:false, errors:["Invalid email/password combination."]})
+          }
         }
+        else {
+          console.log("user not found");
+          res.json({success:false, errors:["Invalid email/password combination."]});
+        }
+      }, function() {
+        res.json({success:false, errors:["Login server is unavailable. Please try again later."]})
       })
-      // .then(function(user) {
-      //   User.save(function(err){
-      //     if(err) {
-      //       console.log('something went wrong in post /submit save');
-      //       res.json(err);
-      //     } else {
-      //       console.log('successfully added a product!');
-      //       res.json(product);
-      //     }
-      //   })
-      // })
     }
     else {
-      console.log("ERR:", errors)
-      res.json(errors);
+      res.json({success:false, errors:errors});
     }
-  },
+  }
 }
 //
 // db.sync().then(function() {

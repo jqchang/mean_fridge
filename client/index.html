@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html ng-app='myApp'>
   <head>
     <meta charset="utf-8">
     <title></title>
+    <script src="/angular/angular.js" charset="utf-8"></script>
+    <script src="/angular-route/angular-route.js" charset="utf-8"></script>
+    <script src="./config/routes.js"></script>
+    <script src="./factories/userFactory.js"></script>
+    <script src="./controllers/UsersController.js"></script>
   </head>
   <body>
-    <form action='/users' method='post'>
-      Email: <input type='text' name='email'><br>
-      Password: <input type='password' name='password'><br>
-      <input type='submit'>
-    </form>
+    <div ng-view>
+    </div>
   </body>
 </html>

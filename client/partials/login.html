@@ -1,0 +1,8 @@
+<form ng-submit='login()'>
+  Email: <input type='text' name='email' ng-model='loginUser.email'><br>
+  Password: <input type='password' name='password' ng-model='loginUser.password'><br>
+  <input type='submit'>
+</form>
+<ul ng-if='errors.length'>
+  <li ng-repeat='error in errors' ng-bind='error'></li>
+</ul>

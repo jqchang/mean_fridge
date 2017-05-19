@@ -1,0 +1,13 @@
+<fieldset>
+  <legend>User List</legend>
+  <table>
+    <thead>
+      <th>Email</th>
+    </thead>
+    <tbody>
+      <tr ng-repeat='user in users | orderBy: createdAt'>
+        <td ng-bind='user.email'></td>
+      </tr>
+    </tbody>
+  </table>
+</fieldset>
